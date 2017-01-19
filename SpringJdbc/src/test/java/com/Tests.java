@@ -2,6 +2,7 @@ package com;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.config.JdbcConfig;
 import com.db.CountryRepository;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={JdbcConfig.class})
+@ActiveProfiles("test")
 public class Tests {
 	
 	@Autowired

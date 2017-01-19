@@ -17,6 +17,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class JdbcConfig {
@@ -50,25 +51,29 @@ public class JdbcConfig {
 	boolean useEmbeddedDB = false;
 	
 	// This connects to my local MySQL thing:
-	/*@Bean
-	public DataSource dataSource() throws Exception {
-		if (!useEmbeddedDB) {
-			DriverManagerDataSource ds = new DriverManagerDataSource();
-			ds.setDriverClassName("com.mysql.jdbc.Driver"); // From: mysql:mysql-connector-java:5.1.6
-			ds.setUrl("jdbc:mysql://localhost:3306/world?useSSL=true&requiresSSL=true");
-			ds.setUsername("root");
-			ds.setPassword("root");
-			return ds;
-		} else {
-		  return new EmbeddedDatabaseBuilder()
+	@Profile("dev")
+	@Bean
+	public DataSource mysqlDataSource() throws Exception {
+		DriverManagerDataSource ds = new DriverManagerDataSource();
+		ds.setDriverClassName("com.mysql.jdbc.Driver"); // From: mysql:mysql-connector-java:5.1.6
+		ds.setUrl("jdbc:mysql://localhost:3306/world?useSSL=true&requiresSSL=true");
+		ds.setUsername("root");
+		ds.setPassword("root");
+		return ds;
+	}
+	
+	@Profile("debug")
+	@Bean
+	public DataSource embeddedDataSource() { 
+		return new EmbeddedDatabaseBuilder()
 		    .setType(EmbeddedDatabaseType.HSQL) // Was .H2
 		    .addScripts("classpath:com/world_country.sql")
 		    .build();
-		}
-	}*/	
+	}
 	
 	
 	// Commons DBCP2:
+	@Profile("test")
 	@Bean
 	public BasicDataSource dbcpDataSource() {
 		BasicDataSource ds = new BasicDataSource();

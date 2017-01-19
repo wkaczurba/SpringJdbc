@@ -34,7 +34,7 @@ public class JdbcCountryRepository implements CountryRepository {
 
 	@Override
 	public Country getCountryByCode(String code) {
-		List<Country> countries = jdbcTemplate.query(SELECT_COUNTRY_BY_CODE, new CountryMapper(), code, 1);
+		List<Country> countries = jdbcTemplate.query(SELECT_COUNTRY_BY_CODE, this::mapRow, code, 1);
 		
 		if (countries.size() == 1)
 			return countries.get(0);
@@ -50,7 +50,7 @@ public class JdbcCountryRepository implements CountryRepository {
 
 	@Override
 	public Country getCountryByName(String name) {
-		List<Country> countries = jdbcTemplate.query(SELECT_COUNTRY_BY_NAME, new CountryMapper(), name, 1);
+		List<Country> countries = jdbcTemplate.query(SELECT_COUNTRY_BY_NAME, this::mapRow, name, 1);
 		
 		if (countries.size() == 1)
 			return countries.get(0);
@@ -64,32 +64,29 @@ public class JdbcCountryRepository implements CountryRepository {
 	public List<String> getAllCountryNames() {
 		return jdbcTemplate.queryForList(SELECT_ALL_NAMES, String.class);
 	}
-
-	private class CountryMapper implements RowMapper<Country> {
-
-		@Override
-		public Country mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Country country = new Country();
-			country.setCode(rs.getString("Code"));
-			//country.set
-			country.setName(rs.getString("name")); // Name`
-			country.setContinent(Continent.valueOf( 
-					rs.getString("continent").toUpperCase().replace(" ", "_") )); // FIXME: Return type is ENUM.
-			
-			country.setRegion(rs.getString("region"));
-			country.setSurfaceArea(rs.getFloat("SurfaceArea"));
-			country.setIndepYear(rs.getInt("IndepYear"));
-			country.setPopulation(rs.getInt("Population"));
-			country.setLifeExpectancy(rs.getFloat("LifeExpectancy"));
-			country.setGnp(rs.getFloat("GNP"));
-			country.setGnpold(rs.getFloat("GNPOld")); //`GNPOld`
-			country.setLocalName(rs.getString("LocalName")); // `LocalName`
-			country.setGovernmentForm(rs.getString("GovernmentForm"));
-			country.setHeadOfState(rs.getString("HeadOfState"));
-			country.setCapital(rs.getString("Capital"));
-			country.setCode2(rs.getString("Code2"));	
-			// TODO Auto-generated method stub
-			return country;
-		}
+	
+	private Country mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Country country = new Country();
+		country.setCode(rs.getString("Code"));
+		//country.set
+		country.setName(rs.getString("name")); // Name`
+		country.setContinent(Continent.valueOf( 
+				rs.getString("continent").toUpperCase().replace(" ", "_") )); // FIXME: Return type is ENUM.
+		
+		country.setRegion(rs.getString("region"));
+		country.setSurfaceArea(rs.getFloat("SurfaceArea"));
+		country.setIndepYear(rs.getInt("IndepYear"));
+		country.setPopulation(rs.getInt("Population"));
+		country.setLifeExpectancy(rs.getFloat("LifeExpectancy"));
+		country.setGnp(rs.getFloat("GNP"));
+		country.setGnpold(rs.getFloat("GNPOld")); //`GNPOld`
+		country.setLocalName(rs.getString("LocalName")); // `LocalName`
+		country.setGovernmentForm(rs.getString("GovernmentForm"));
+		country.setHeadOfState(rs.getString("HeadOfState"));
+		country.setCapital(rs.getString("Capital"));
+		country.setCode2(rs.getString("Code2"));	
+		// TODO Auto-generated method stub
+		return country;
 	}
+
 }
