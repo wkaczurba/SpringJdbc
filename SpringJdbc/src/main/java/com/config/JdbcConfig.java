@@ -2,6 +2,8 @@ package com.config;
 
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jndi.JndiObjectFactoryBean;
@@ -48,22 +50,37 @@ public class JdbcConfig {
 	boolean useEmbeddedDB = false;
 	
 	// This connects to my local MySQL thing:
-	@Bean
+	/*@Bean
 	public DataSource dataSource() throws Exception {
 		if (!useEmbeddedDB) {
 			DriverManagerDataSource ds = new DriverManagerDataSource();
 			ds.setDriverClassName("com.mysql.jdbc.Driver"); // From: mysql:mysql-connector-java:5.1.6
-			ds.setUrl("jdbc:mysql://localhost:3306/world");
+			ds.setUrl("jdbc:mysql://localhost:3306/world?useSSL=true&requiresSSL=true");
 			ds.setUsername("root");
 			ds.setPassword("root");
 			return ds;
 		} else {
 		  return new EmbeddedDatabaseBuilder()
 		    .setType(EmbeddedDatabaseType.HSQL) // Was .H2
-		    .addScripts("classpath:com/world_country.sql" /*, "classpath:spittr/db/jdbc/test-data.sql"*/)
+		    .addScripts("classpath:com/world_country.sql")
 		    .build();
 		}
-	}	
+	}*/	
+	
+	
+	// Commons DBCP2:
+	@Bean
+	public BasicDataSource dbcpDataSource() {
+		BasicDataSource ds = new BasicDataSource();
+		ds.setDriverClassName("com.mysql.jdbc.Driver");
+		ds.setUrl("jdbc:mysql://localhost:3306/world?useSSL=true&requiresSSL=true");
+		//ds.setUrl("jdbc:mysql://localhost:3306/world"); (USE THIS ONE TO SEE CONNECTIONS CREATED (SSL-WARNING ON EVERY CONNECTION CREATED))
+		ds.setUsername("root");
+		ds.setPassword("root");
+		ds.setInitialSize(5);
+		ds.setMaxTotal(10);
+		return ds;
+	}
 	
 	@Bean
 	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
